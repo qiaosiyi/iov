@@ -179,6 +179,8 @@ if __name__ == '__main__':
 		connected = nc.checkNetConnect()
 		if connected:
 			print " [.]network is connected"
+			print " waiting for date & time sync...30 seconds..."
+			time.sleep(30)
 			nc.connectVPN()
 		else:
 			print " [x]cannot connect to network, try 4G connection..."
