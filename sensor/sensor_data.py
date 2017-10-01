@@ -18,7 +18,6 @@ log_path = '/home/pi/data_iov/log/raspi_IOV.log'
 logger = logcreator.createLogger("SensorLogger", log_path, logging.INFO)
 json_data=open('/home/pi/data_iov/iov.config', 'r').read()
 configdata = json.loads(json_data)
-
 class sensor_data(rpc_client):
 	"""docstring for sensor_data"""
 	def __init__(self, username, passwd, hostip, queuename, serialport):
@@ -51,7 +50,7 @@ class sensor_data(rpc_client):
 	def processing_data(self):
 
 		ser=serial.Serial(self.serialport, baudrate=115200, timeout=.1, rtscts=0)
-
+		is_start = 1
 		if self.offlineMode:
 			fn = strftime("%Y%m%d%H%M%S.sen", gmtime())
 			fw = open(fn, 'w')
@@ -70,7 +69,12 @@ class sensor_data(rpc_client):
 				ticks = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
 				for i in range(0,16):
 					nums[i] = float(nums[i])
-				jsonFormat = {'acx': nums[0],'acy':nums[1] ,'acz':nums[2] ,'grx':nums[3] ,'gry':nums[4] ,'grz':nums[5] ,'agx':nums[6] ,'agy':nums[7] ,'agz':nums[8] ,'mag':nums[9] ,'pap':nums[10] ,'php':nums[11] ,'lng':nums[12] ,'lat':nums[13] ,'gph':nums[14] ,'gpv':nums[15] ,'t':ticks}
+				 
+				if is_start == 1:
+					nums16 = 1
+				else:
+					nums16 = 0		
+				jsonFormat = {'acx': nums[0],'acy':nums[1] ,'acz':nums[2] ,'grx':nums[3] ,'gry':nums[4] ,'grz':nums[5] ,'agx':nums[6] ,'agy':nums[7] ,'agz':nums[8] ,'mag':nums[9] ,'pap':nums[10] ,'php':nums[11] ,'lng':nums[12] ,'lat':nums[13] ,'gph':nums[14] ,'gpv':nums[15] ,'is_start':nums16,'t':ticks}
 				message = {"vid":configdata['vid'], "result":str(jsonFormat), "tag":1}
 				print message
 				if self.offlineMode:
@@ -78,6 +82,7 @@ class sensor_data(rpc_client):
 					fw.write('\n')
 				else:
 					self.start(str(message))
+				is_start = 0
 				time.sleep(0.8)
 		except KeyboardInterrupt:
 			if self.offlineMode:
