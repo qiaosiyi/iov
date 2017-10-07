@@ -38,7 +38,7 @@ do
 		cd
 	fi
 	raspi-gpio set 24 dh
-	sleep 1
+	sleep 5
 
 	res=`ps aux | grep sensor_data | grep python`
 	if [ $? != 1 ] 
