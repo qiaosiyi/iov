@@ -74,7 +74,11 @@ class sensor_data(rpc_client):
 					nums16 = 1
 				else:
 					nums16 = 0		
-				jsonFormat = {'acx': nums[0],'acy':nums[1] ,'acz':nums[2] ,'grx':nums[3] ,'gry':nums[4] ,'grz':nums[5] ,'agx':nums[6] ,'agy':nums[7] ,'agz':nums[8] ,'mag':nums[9] ,'pap':nums[10] ,'php':nums[11] ,'lng':nums[12] ,'lat':nums[13] ,'gph':nums[14] ,'gpv':nums[15] ,'is_start':nums16,'t':ticks}
+				jsonFormat = {'acx': nums[0],'acy':nums[1] ,'acz':nums[2] ,'grx':nums[3] ,\
+								'gry':nums[4] ,'grz':nums[5] ,'agx':nums[6] ,'agy':nums[7] ,\
+								'agz':nums[8] ,'mag':nums[9] ,'pap':nums[10] ,'php':nums[11] ,\
+								'lng':nums[12] ,'lat':nums[13] ,'gph':nums[14] ,'gpv':nums[15] ,\
+								'is_start':nums16,'t':ticks}
 				message = {"vid":configdata['vid'], "result":str(jsonFormat), "tag":1}
 				print message
 				if self.offlineMode:
