@@ -298,6 +298,9 @@ int fatiguepredict(cv::Mat &frame, cv::CascadeClassifier &fcc, LBFRegressor &reg
 					
 					cout << "PERCLOSE: " << perclose << endl;
 					perclose_color = cv::Scalar(0,255,0);
+					if (perclose > 0.3){
+						return 1;
+}
 					if (perclose > percloseThreshold)
 					{
 						perclose_color = cv::Scalar(0,0,255);
