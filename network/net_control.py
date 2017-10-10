@@ -75,7 +75,9 @@ class networkControl(object):
 	
 	def restart4G(self):
 		logger.info('restart the power of 4G')
-		LED = 25
+		
+		print 'restart4G().'
+		LED = 18 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(LED, GPIO.OUT)
 		GPIO.output(LED, True)
@@ -189,6 +191,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	nc = networkControl(args.serialport, args.baudrate, args.timeout, args.rtscts)
+	errortime = 0
 	while 1:
 		print
 		print " [x]check network connection"
@@ -196,7 +199,7 @@ if __name__ == '__main__':
 		if connected:
 			print	
 			print " [.]network is connected"
-			
+			errortime = 0	
 			nc.connectVPN()
 		else:
 			print
@@ -206,7 +209,8 @@ if __name__ == '__main__':
 				print " [.]connected to 4G network"
 				
 			else:
-				print
+				errortime = errortime + 1
+				print "errortime:",errortime
 				print " [x]failed to connection"
 				print "4G is down, try to kill all openvpn"
 				res, info = commands.getstatusoutput('ps -aux | grep raspi.ovpn')
@@ -216,6 +220,10 @@ if __name__ == '__main__':
 					print "killing all openvpn."
 				if info[0] == 'pi':
 					print "openvpn has stop."
+				if errortime > 9:
+					nc.restart4G()
+					print "restarting 4G module."
+					errortime = 0
 				continue
 		for i in range(args.interval):
 			time.sleep(1)
