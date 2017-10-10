@@ -191,9 +191,9 @@ if __name__ == '__main__':
 			print " waiting for date & time sync...30 seconds..."
 			for i in range(29):
 				time.sleep(1)
-				print i,"..",
+				print i,".."
 			time.sleep(1)
-			print 30..
+			print 30
 			nc.connectVPN()
 		else:
 			print " [x]cannot connect to network, try 4G connection..."
