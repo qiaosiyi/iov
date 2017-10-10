@@ -67,6 +67,7 @@ class networkControl(object):
 		logger.debug('test VPN ping')
 		while (not connected and checktime > 0):
 			connected = os.system('ping 10.8.0.1 -qc 3 -I tun0')
+			# ping 10.8.0.1 -qc 3 -I tun0
 			checktime -=1
 		if connected:
 			logger.debug('ping VPN fail')
@@ -88,6 +89,7 @@ class networkControl(object):
 		checktime = 1 
 		while (not connected and checktime > 0):
 			connected = os.system('ping '+ serverIP +' -qc 3 -I ' + eth)
+			#ping 101.200.181.242 -qc 3 -I eth0
 			checktime -=1
 		if connected:
 			logger.debug('ping fail')
@@ -187,7 +189,11 @@ if __name__ == '__main__':
 		if connected:
 			print " [.]network is connected"
 			print " waiting for date & time sync...30 seconds..."
-			time.sleep(30)
+			for i in range(29):
+				time.sleep(1)
+				print i,"..",
+			time.sleep(1)
+			print 30..
 			nc.connectVPN()
 		else:
 			print " [x]cannot connect to network, try 4G connection..."
