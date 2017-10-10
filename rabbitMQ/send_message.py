@@ -47,6 +47,7 @@ if __name__ == '__main__':
 		payload = {"vid":data['vid'], "message":message['result'], "time":ticks, "tag":message['tag']}
 
 	elif message['tag'] == 3:
+		print 'send driver ID'
 		payload = {"did":message['did'], "time":ticks, "vid":data['vid'], 'tag':message['tag']}
 
 	elif message['tag'] == 2:

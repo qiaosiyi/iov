@@ -298,7 +298,7 @@ int fatiguepredict(cv::Mat &frame, cv::CascadeClassifier &fcc, LBFRegressor &reg
 					
 					cout << "PERCLOSE: " << perclose << endl;
 					perclose_color = cv::Scalar(0,255,0);
-					if (perclose > 0.3){
+					if (perclose > 0.5){
 						return 1;
 					}
 					if (perclose > percloseThreshold)
@@ -318,9 +318,9 @@ int fatiguepredict(cv::Mat &frame, cv::CascadeClassifier &fcc, LBFRegressor &reg
 					
 					cout << "YAWN FRAME RATE: " << yawnFrameRate << endl;
 					yawnFrameRateColor = cv::Scalar(0,255,0);
-					if (yawnFrameRate > 0.3){
-						return 2;
-					}
+
+
+
 					if (yawnFrameRate>yawnFrameRateThreshold)
 					{
 						yawnFrameRateColor = cv::Scalar(0,0,255);

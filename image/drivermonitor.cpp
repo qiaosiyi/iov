@@ -24,7 +24,7 @@ string getID(){
 void *message_helper(void *command){
 	int cnt = 5;
 	int res = 1;
-	printf("try to send pic\n");
+//	printf("try to send pic\n");
 	while(res != 0 && cnt--){
 		res = system((char*)command);
 	}
@@ -120,9 +120,9 @@ int main(int argc, char* argv[]){
 			else if(res == -2){
 				//face not detect
 				printf("face not detect! try again!\n");
-				string command = "python " + string(basedir) + "/rabbitMQ/send_message.py -m " + "\'{\"tag\":1,\"result\":\"face not detect\"}\'";
+				//string command = "python " + string(basedir) + "/rabbitMQ/send_message.py -m " + "\'{\"tag\":1,\"result\":\"face not detect\"}\'";
 //python send_message.py -m '{"tag":1,"result":"hello world"}'
-				int errorcode = system(command.c_str());
+				//int errorcode = system(command.c_str());
 				//cout << command << endl << errorcode << endl;
 			}
 			else{
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]){
 				string  _id = getID();
 				string imgfile = fatiguedir + _id + ".jpg";
 				cv::imwrite(imgfile, frame);
-				string command =  "python " + string(basedir) + "/rabbitMQ/send_message.py -m " + "\'{\"filepath\":\""+imgfile+"\",\"tag\":4,\"fatigue\":"+ to_string(res) +"}\'";
+				string command =  "python " + string(basedir) + "/rabbitMQ/send_message.py -m " + "\'{\"filepath\":\""+imgfile+"\",\"tag\":4,\"fatigue\":\""+ to_string(res) +"\"}\'";
 				pthread_t t;
 				int ret = pthread_create(&t, NULL , message_helper, (void*)(command.c_str()));
 				//int errorcode = system(command.c_str());
