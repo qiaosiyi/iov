@@ -102,9 +102,12 @@ class networkControl(object):
 			logger.debug('VPN already connect')
 			print "VPN already connect"
 			return
+		else:
+			print "Check resault:VPN is down."
+
 		logger.info('try to connect VPN')
 		res, info = commands.getstatusoutput('ps -aux | grep raspi.ovpn')
-		print "connectVPN res,info:",res,info
+		print "connectVPN res:",res
 		if not res:
 			#info = info.split()
 			#if len(info) > 15:
