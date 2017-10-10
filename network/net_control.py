@@ -104,16 +104,15 @@ class networkControl(object):
 			return
 		logger.info('try to connect VPN')
 		res, info = commands.getstatusoutput('ps -aux | grep raspi.ovpn')
+		print "connectVPN res,info:",res,info
 		if not res:
 			#info = info.split()
 			#if len(info) > 15:
 				#print info[15]
 			print " waiting for date & time sync...30 seconds..."
-			for i in range(29):
+			for i in range(30):
 				time.sleep(1)
-				print i,".."
-			time.sleep(1)
-			print 30
+				print i,"waiting for sync.."
 			logger.debug('kill all openvpn service')
 			os.system('sudo killall openvpn')
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
@@ -190,18 +189,25 @@ if __name__ == '__main__':
 
 	nc = networkControl(args.serialport, args.baudrate, args.timeout, args.rtscts)
 	while 1:
+		print
 		print " [x]check network connection"
 		connected = nc.checkNetConnect()
 		if connected:
+			print	
 			print " [.]network is connected"
 			
 			nc.connectVPN()
 		else:
+			print
 			print " [x]cannot connect to network, try 4G connection..."
 			if nc.connect4G():
+				print
 				print " [.]connected to 4G network"
 				
 			else:
+				print
 				print " [x]failed to connection"
 				continue
-		time.sleep(args.interval)
+		for i in range(args.interval):
+			time.sleep(1)
+			print i,"main "
