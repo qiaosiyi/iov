@@ -108,6 +108,12 @@ class networkControl(object):
 			#info = info.split()
 			#if len(info) > 15:
 				#print info[15]
+			print " waiting for date & time sync...30 seconds..."
+			for i in range(29):
+				time.sleep(1)
+				print i,".."
+			time.sleep(1)
+			print 30
 			logger.debug('kill all openvpn service')
 			os.system('sudo killall openvpn')
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
@@ -127,12 +133,12 @@ class networkControl(object):
 
 			ser.write(b'ATE1\r')
 			response = ser.read(256)
-			print "print:ATE1:",response
+			# print "print:ATE1:",response
 			logger.debug(response)
 			
 			ser.write(b'AT^SYSINFO\r')
 			response = ser.read(256)
-			print "print:AT^SYSINFO",response
+			# print "print:AT^SYSINFO",response
 			logger.debug(response)
 			
 			flag = con_time
@@ -140,29 +146,29 @@ class networkControl(object):
 				ser.write(b'AT+CGACT=1,1\r')
 			#	time.sleep(0.5)
 				response = ser.read(256)
-				print "print:AT+CGACT=1,1:",response
+				# print "print:AT+CGACT=1,1:",response
 				#print response
 				if response.find("ERROR") == -1:
 					logger.info(response)
-					print "print:ERROR==-1:",response
+					# print "print:ERROR==-1:",response
 					flag = 0
 				else:
 					flag = flag - 1
-					print "print:flag:",flag
+					# print "print:flag:",flag
 			flag = con_time
 			while(flag):
 				ser.write(b'AT+ZGACT=0,1\r')
 				response = ser.read(256)
-				print "print:AT+ZGACT=0,1:",response
+				# print "print:AT+ZGACT=0,1:",response
 				#print response
 				ser.write(b'AT+ZGACT=1,1\r')
 			#	time.sleep(0.5)
 				response = ser.read(256)
-				print "print:AT+ZGACT=1,1:",response
+				# print "print:AT+ZGACT=1,1:",response
 				#print response
 				if response.find("+ZCONSTAT: 1,1") != -1:
 					logger.debug(response)
-					print "print:+ZCONSTAT: 1,1:",response
+					# print "print:+ZCONSTAT: 1,1:",response
 					flag = 0
 				else:
 					flag = flag - 1
@@ -188,12 +194,7 @@ if __name__ == '__main__':
 		connected = nc.checkNetConnect()
 		if connected:
 			print " [.]network is connected"
-			print " waiting for date & time sync...30 seconds..."
-			for i in range(29):
-				time.sleep(1)
-				print i,".."
-			time.sleep(1)
-			print 30
+			
 			nc.connectVPN()
 		else:
 			print " [x]cannot connect to network, try 4G connection..."
