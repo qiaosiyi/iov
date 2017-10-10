@@ -107,24 +107,22 @@ class networkControl(object):
 
 		logger.info('try to connect VPN')
 		res, info = commands.getstatusoutput('ps -aux | grep raspi.ovpn')
-		print "connectVPN res:",res
-		if not res:
-			#info = info.split()
-			#if len(info) > 15:
-				#print info[15]
+		info = info.split()
+		if info[0] == 'pi':#openvpn deamon thread is not running 
 			print " waiting for date & time sync...30 seconds..."
 			for i in range(30):
 				time.sleep(1)
 				print i,"waiting for sync.."
 			logger.debug('kill all openvpn service')
 			os.system('sudo killall openvpn')
+			print "clean all openvpn and restart openvpn."
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
 			logger.info("connect to VPN")
-			print "connect to VPN"
+			print "have try to connect to VPN"
 	
-		        if self.checkVPNConnect():
-				logger.debug('VPN already connect')
-				print "VPN already connect"
+		   #if self.checkVPNConnect():
+			#	logger.debug('VPN already connect')
+			#	print "VPN already connect"
 	def connect4G(self):
 		#print "serialport:",self.serialport
 		#print "baudrate:",self.baudrate
@@ -210,6 +208,14 @@ if __name__ == '__main__':
 			else:
 				print
 				print " [x]failed to connection"
+				print "4G is down, try to kill all openvpn"
+				res, info = commands.getstatusoutput('ps -aux | grep raspi.ovpn')
+				info = info.split()
+				if info[0] == 'root':
+					os.system('sudo killall openvpn')
+					print "killing all openvpn."
+				if info[0] == 'pi':
+					print "openvpn has stop."
 				continue
 		for i in range(args.interval):
 			time.sleep(1)
