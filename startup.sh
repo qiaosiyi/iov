@@ -24,7 +24,7 @@ do
         	echo 'net control already start'
 	else
 		echo 'restart net control'
-		nohup python /home/pi/iov/network/net_control.py > /home/pi/net_control.log 2>&1 &
+		nohup python /home/pi/iovgit/network/net_control.py > /home/pi/net_control.log 2>&1 &
 	fi
 	
 	res=`ps aux | grep drivermonitor | grep image`
@@ -34,7 +34,7 @@ do
 	else
 		echo 'restart driver monitor'
 		cd /home/pi/iov/image
-		#nohup /home/pi/iov/image/drivermonitor 600 > /home/pi/data_iov/log/drivermonitor.log 2>&1 &
+		nohup /home/pi/iovgit/image/drivermonitor 300 > /home/pi/data_iov/log/drivermonitor.log 2>&1 &
 		cd
 	fi
 	raspi-gpio set 24 dh
@@ -46,7 +46,7 @@ do
         	echo 'sensor data already start'
 	else
 		echo 'restart sensor data'
-		#nohup python /home/pi/iov/sensor/sensor_data.py > /home/pi/data_iov/log/sensor_data.log 2>&1 &
+		nohup python /home/pi/iovgit/sensor/sensor_data.py > /home/pi/data_iov/log/sensor_data.log 2>&1 &
 	fi
 	LASTTIME=`date '+%s'`
 	interval=`expr $LASTTIME - $CURTIME`
