@@ -12,7 +12,7 @@ import RPi.GPIO as GPIO
 import network.VPN_connect as vpn
 import json
 
-con_time = 10
+con_time = 1
 serverIP= '101.200.181.242'
 eth = 'eth1'
 basedir = os.environ['IOVPATH']
@@ -135,12 +135,12 @@ class networkControl(object):
 
 			ser.write(b'ATE1\r')
 			response = ser.read(256)
-			# print "print:ATE1:",response
+			print "print:ATE1:",response
 			logger.debug(response)
 			
 			ser.write(b'AT^SYSINFO\r')
 			response = ser.read(256)
-			# print "print:AT^SYSINFO",response
+			print "print:AT^SYSINFO",response
 			logger.debug(response)
 			
 			flag = con_time
@@ -148,7 +148,7 @@ class networkControl(object):
 				ser.write(b'AT+CGACT=1,1\r')
 			#	time.sleep(0.5)
 				response = ser.read(256)
-				# print "print:AT+CGACT=1,1:",response
+				print "print:AT+CGACT=1,1:",response
 				#print response
 				if response.find("ERROR") == -1:
 					logger.info(response)
@@ -159,14 +159,14 @@ class networkControl(object):
 					# print "print:flag:",flag
 			flag = con_time
 			while(flag):
-				ser.write(b'AT+ZGACT=0,1\r')
-				response = ser.read(256)
-				# print "print:AT+ZGACT=0,1:",response
+		#		ser.write(b'AT+ZGACT=0,1\r')
+		#k		response = ser.read(256)
+		#		print "print:AT+ZGACT=0,1:",response
 				#print response
 				ser.write(b'AT+ZGACT=1,1\r')
 			#	time.sleep(0.5)
 				response = ser.read(256)
-				# print "print:AT+ZGACT=1,1:",response
+				print "print:AT+ZGACT=1,1:",response
 				#print response
 				if response.find("+ZCONSTAT: 1,1") != -1:
 					logger.debug(response)
@@ -174,6 +174,7 @@ class networkControl(object):
 					flag = 0
 				else:
 					flag = flag - 1
+				time.sleep(10)
 		except:
 			self.checkSerialPort()
 			time.sleep(5)
