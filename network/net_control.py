@@ -112,13 +112,14 @@ class networkControl(object):
 		info = info.split()
 		if info[0] == 'pi':#openvpn deamon thread is not running 
 			print " waiting for date & time sync...30 seconds..."
-			for i in range(30):
+			for i in range(3):
 				time.sleep(1)
 				print i,"waiting for sync.."
 			logger.debug('kill all openvpn service')
 			os.system('sudo killall openvpn')
 			print "clean all openvpn and restart openvpn."
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
+	#		res, info = commands.getstatusoutput('sudo openvpn ' + vpncert.strip() + ' >/home/pi/net_control.log &')
 			logger.info("connect to VPN")
 			print "have try to connect to VPN"
 	
@@ -157,11 +158,11 @@ class networkControl(object):
 				else:
 					flag = flag - 1
 					# print "print:flag:",flag
-			flag = con_time
+			flag = con_time 
 			while(flag):
-		#		ser.write(b'AT+ZGACT=0,1\r')
-		#k		response = ser.read(256)
-		#		print "print:AT+ZGACT=0,1:",response
+				ser.write(b'AT+ZGACT=0,1\r')
+				response = ser.read(256)
+				print "print:AT+ZGACT=0,1:",response
 				#print response
 				ser.write(b'AT+ZGACT=1,1\r')
 			#	time.sleep(0.5)
@@ -174,7 +175,7 @@ class networkControl(object):
 					flag = 0
 				else:
 					flag = flag - 1
-				time.sleep(10)
+				time.sleep(15)
 		except:
 			self.checkSerialPort()
 			time.sleep(5)
@@ -188,7 +189,7 @@ if __name__ == '__main__':
 	parser.add_argument('-b', dest='baudrate',default=115200,type=int, help='set baudrate to serialport')
 	parser.add_argument('-t', dest='timeout',default=.1,type=float, help='set timeout to serialport connection')
 	parser.add_argument('-r', dest='rtscts',default=0,type=int, help='set rtscts to serialport')
-	parser.add_argument('-i', dest='interval', default=60, type=int, help='time interval to check the network status')
+	parser.add_argument('-i', dest='interval', default=20, type=int, help='time interval to check the network status')
 	args = parser.parse_args()
 
 	nc = networkControl(args.serialport, args.baudrate, args.timeout, args.rtscts)
