@@ -17,7 +17,7 @@ raspi-gpio set 24 op
 interval=0
 while [ 1 ]
 do
-#	raspi-gpio set 24 dl
+	raspi-gpio set 24 dl
 	res=`ps aux | grep net_control | grep python`
 	if [ $? != 1 ] 
 	then
@@ -43,10 +43,10 @@ do
 	else
 		echo 'restart driver monitor'
 		cd /home/pi/iov/image
-#		nohup /home/pi/iov/image/drivermonitor 200 > /home/pi/data_iov/log/drivermonitor.log 2>&1 &
+		nohup /home/pi/iov/image/drivermonitor 20 > /home/pi/data_iov/log/drivermonitor.log 2>&1 &
 		cd
 	fi
-#	raspi-gpio set 24 dh
+	raspi-gpio set 24 dh
 	sleep 5
 
 	res=`ps aux | grep sensor_data | grep python`
@@ -55,7 +55,7 @@ do
         	echo 'sensor data already start'
 	else
 		echo 'restart sensor data'
-#		nohup python /home/pi/iov/sensor/sensor_data.py > /home/pi/data_iov/log/sensor_data.log 2>&1 &
+		nohup python /home/pi/iov/sensor/sensor_data.py > /home/pi/data_iov/log/sensor_data.log 2>&1 &
 	fi
 	LASTTIME=`date '+%s'`
 	interval=`expr $LASTTIME - $CURTIME`
