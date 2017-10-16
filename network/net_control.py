@@ -119,7 +119,6 @@ class networkControl(object):
 			os.system('sudo killall openvpn')
 			print "clean all openvpn and restart openvpn."
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
-	#		res, info = commands.getstatusoutput('sudo openvpn ' + vpncert.strip() + ' >/home/pi/net_control.log &')
 			logger.info("connect to VPN")
 			print "have try to connect to VPN"
 	
