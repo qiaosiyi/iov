@@ -11,10 +11,12 @@ import json
 from rabbitMQ.rpc_client import rpc_client
 import logging
 import logcreator
+from subprocess import call
+
 
 basedir = os.environ['IOVPATH']
-#log_path = os.path.join(basedir, 'raspi_IOV.log')
 log_path = '/home/pi/data_iov/log/raspi_IOV.log'
+storage_path = '/home/pi/data_iov/sensor'
 logger = logcreator.createLogger("SensorLogger", log_path, logging.INFO)
 json_data=open('/home/pi/data_iov/iov.config', 'r').read()
 configdata = json.loads(json_data)
@@ -62,6 +64,7 @@ class sensor_data(rpc_client):
 					continue
 				if (rawdata[0] != 's' or rawdata[-3] != 'e'):
 					#print "broken data!"
+					#print rawdata
 					continue
 				nums = rawdata.split(" ")[1:-1]
 				if len(nums) != 16:
@@ -74,27 +77,55 @@ class sensor_data(rpc_client):
 					nums16 = 1
 				else:
 					nums16 = 0		
-				jsonFormat = {'acx': nums[0],'acy':nums[1] ,'acz':nums[2] ,'grx':nums[3] ,\
-								'gry':nums[4] ,'grz':nums[5] ,'agx':nums[6] ,'agy':nums[7] ,\
-								'agz':nums[8] ,'mag':nums[9] ,'pap':nums[10] ,'php':nums[11] ,\
-								'lng':nums[12] ,'lat':nums[13] ,'gph':nums[14] ,'gpv':nums[15] ,\
-								'is_start':nums16,'t':ticks}
-				message = {"vid":configdata['vid'], "result":str(jsonFormat), "tag":1}
-				print message
-				if self.offlineMode:
-					fw.write(str(jsonFormat))
-					fw.write('\n')
+				fn = str(configdata['vid']) + "_" + ticks + "_SENSOR" #      168804_2017-12-20 11:18:27_SENSOR
+				#print "fn:",fn
+				ff = ''
+				for k in fn:
+					if k == ' ' or k == ':':
+						ff = ff + '\\' + k
+					else:
+						ff = ff + k
+				#print "ff:",ff
+				# print fn
+				if nums[0] == 0.001 and nums[1] == 0.001 and nums[2] == 0.001 :
+					should_shut_down = 1
+					print "shutdown now!!"
+					call("sudo shutdown -h now", shell=True)
+					time.sleep(40)
+					continue
 				else:
-					self.start(str(message))
+					should_shut_down = 0
+				fw = open(fn+".txt", 'w')
+				fw.write(str(configdata['vid'])+'\n'+\
+					ticks+'\n'+\
+					str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
+					str(nums[3])+' '+str(nums[4])+' '+str(nums[5])+' '+\
+					str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
+					str(nums[10])+' '+str(nums[11])+' '+\
+					str(nums[12])+' '+str(nums[13])+' '+str(nums[14])+' '+str(nums[15])+'\n')
+				fw.close()
+				cmd = "tar -cvf tmp.tar " + ff+".txt"
+				res, info = commands.getstatusoutput(cmd) 
+				cmd = "mv tmp.tar " + ff + ".tar"
+				res, info = commands.getstatusoutput(cmd)
+				cmd = "mv " + ff + ".tar " + storage_path
+				res, info = commands.getstatusoutput(cmd)
+				cmd = "rm " + ff + ".txt"
+				res, info = commands.getstatusoutput(cmd)
+				print storage_path + "/"+ fn +".tar file write successfully!"
+				
 				is_start = 0
 				time.sleep(0.8)
 		except KeyboardInterrupt:
-			if self.offlineMode:
+			if "fw" in locals():
+				fw.close()
+		finally:
+			if "fw" in locals():
 				fw.close()
 		return
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description='capture sensor via serial from MCU and push them to server side!')
+	parser = argparse.ArgumentParser(description='capture sensor via serial from MCU')
 	parser.add_argument('-s', dest='serialport', type =str, help='serialport of the MCU')
 	parser.add_argument('-host', dest = 'hostip', type = str, help = 'host IP of the server', default = '101.200.181.242')
 	args = parser.parse_args()
