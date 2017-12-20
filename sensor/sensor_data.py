@@ -69,7 +69,7 @@ class sensor_data(rpc_client):
 				nums = rawdata.split(" ")[1:-1]
 				if len(nums) != 16:
 					continue
-				ticks = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+				ticks = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) #get timestamp
 				for i in range(0,16):
 					nums[i] = float(nums[i])
 				 
@@ -77,17 +77,14 @@ class sensor_data(rpc_client):
 					nums16 = 1
 				else:
 					nums16 = 0		
-				fn = str(configdata['vid']) + "_" + ticks + "_SENSOR" #      168804_2017-12-20 11:18:27_SENSOR
-				#print "fn:",fn
+				fn = str(configdata['vid']) + "_" + ticks + "_SENSOR" #  FileName generate:  e.g. 168804_2017-12-20 11:18:27_SENSOR
 				ff = ''
-				for k in fn:
+				for k in fn:# translate to shell formate
 					if k == ' ' or k == ':':
 						ff = ff + '\\' + k
 					else:
 						ff = ff + k
-				#print "ff:",ff
-				# print fn
-				if nums[0] == 0.001 and nums[1] == 0.001 and nums[2] == 0.001 :
+				if nums[0] == 0.001 and nums[1] == 0.001 and nums[2] == 0.001 : #if power off then shutdown
 					should_shut_down = 1
 					print "shutdown now!!"
 					call("sudo shutdown -h now", shell=True)
@@ -95,7 +92,7 @@ class sensor_data(rpc_client):
 					continue
 				else:
 					should_shut_down = 0
-				fw = open(fn+".txt", 'w')
+				fw = open(fn+".txt", 'w') # write value to file
 				fw.write(str(configdata['vid'])+'\n'+\
 					ticks+'\n'+\
 					str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
@@ -103,8 +100,8 @@ class sensor_data(rpc_client):
 					str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
 					str(nums[10])+' '+str(nums[11])+' '+\
 					str(nums[12])+' '+str(nums[13])+' '+str(nums[14])+' '+str(nums[15])+'\n')
-				fw.close()
-				cmd = "tar -cvf tmp.tar " + ff+".txt"
+				fw.close() 
+				cmd = "tar -cvf tmp.tar " + ff+".txt" #tar the text file and move it to storage path
 				res, info = commands.getstatusoutput(cmd) 
 				cmd = "mv tmp.tar " + ff + ".tar"
 				res, info = commands.getstatusoutput(cmd)
@@ -119,7 +116,7 @@ class sensor_data(rpc_client):
 		except KeyboardInterrupt:
 			if "fw" in locals():
 				fw.close()
-		finally:
+		finally: # shutdown process before shutting down program should comfirme that no opened file
 			if "fw" in locals():
 				fw.close()
 		return
