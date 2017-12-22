@@ -5,7 +5,7 @@ from time import gmtime, strftime
 import os
 import time
 import sys
-import commands
+import commands 
 import argparse
 import json
 from rabbitMQ.rpc_client import rpc_client
@@ -53,6 +53,7 @@ class sensor_data(rpc_client):
 
 		ser=serial.Serial(self.serialport, baudrate=115200, timeout=.1, rtscts=0)
 		is_start = 1
+		passtime = 0
 		if self.offlineMode:
 			fn = strftime("%Y%m%d%H%M%S.sen", gmtime())
 			fw = open(fn, 'w')
@@ -92,33 +93,41 @@ class sensor_data(rpc_client):
 					continue
 				else:
 					should_shut_down = 0
-				fw = open(fn+".txt", 'w') # write value to file
-				fw.write(str(configdata['vid'])+'\n'+\
-					ticks+'\n'+\
-					str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
-					str(nums[3])+' '+str(nums[4])+' '+str(nums[5])+' '+\
-					str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
-					str(nums[10])+' '+str(nums[11])+' '+\
-					str(nums[12])+' '+str(nums[13])+' '+str(nums[14])+' '+str(nums[15])+'\n')
-				fw.close() 
-				cmd = "tar -cvf tmp.tar " + ff+".txt" #tar the text file and move it to storage path
-				res, info = commands.getstatusoutput(cmd) 
-				cmd = "mv tmp.tar " + ff + ".tar"
-				res, info = commands.getstatusoutput(cmd)
-				cmd = "mv " + ff + ".tar " + storage_path
-				res, info = commands.getstatusoutput(cmd)
-				cmd = "rm " + ff + ".txt"
-				res, info = commands.getstatusoutput(cmd)
-				print storage_path + "/"+ fn +".tar file write successfully!"
+				if passtime == 4:
+					fw = open(fn+".txt", 'w') # write value to file
+					fw.write(str(configdata['vid'])+'\n'+\
+						ticks+'\n'+\
+						str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
+						str(nums[3])+' '+str(nums[4])+' '+str(nums[5])+' '+\
+						str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
+						str(nums[10])+' '+str(nums[11])+' '+\
+						str(nums[12])+' '+str(nums[13])+' '+str(nums[14])+' '+str(nums[15])+'\n')
+					fw.close() 
+					cmd = "tar -cvf tmp.tar " + ff+".txt" #tar the text file and move it to storage path
+					res, info = commands.getstatusoutput(cmd) 
+					cmd = "mv tmp.tar " + ff + ".tar"
+					res, info = commands.getstatusoutput(cmd)
+					cmd = "mv " + ff + ".tar " + storage_path
+					res, info = commands.getstatusoutput(cmd)
+					cmd = "rm " + ff + ".txt"
+					res, info = commands.getstatusoutput(cmd)
+					print storage_path + "/"+ fn +".tar file write successfully!"
+					passtime = 0
+				else :
+					passtime = passtime + 1
+					print "passtime=",passtime
+					continue
+					
 				
 				is_start = 0
 				time.sleep(0.8)
-		except KeyboardInterrupt:
-			if "fw" in locals():
-				fw.close()
+		# except KeyboardInterrupt:
+		# 	if "fw" in locals():
+		# 		fw.close()
 		finally: # shutdown process before shutting down program should comfirme that no opened file
 			if "fw" in locals():
 				fw.close()
+			print "close file."
 		return
 
 if __name__ == '__main__':
