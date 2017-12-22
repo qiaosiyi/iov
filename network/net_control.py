@@ -14,7 +14,7 @@ import json
 
 con_time = 1
 serverIP= '101.200.181.242'
-eth = 'eth1'
+eth = 'eth1' 
 basedir = os.environ['IOVPATH']
 #log_path = os.path.join(basedir, 'raspi_IOV.log')
 log_path = "/home/pi/data_iov/log/raspi_IOV.log"
@@ -80,9 +80,9 @@ class networkControl(object):
 		LED = 18 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(LED, GPIO.OUT)
-		GPIO.output(LED, True)
-		time.sleep(1)
 		GPIO.output(LED, False)
+		time.sleep(1)
+		GPIO.output(LED, True)
 		time.sleep(1)
 		GPIO.cleanup()
 	
@@ -121,7 +121,14 @@ class networkControl(object):
 			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
 			logger.info("connect to VPN")
 			print "have try to connect to VPN"
-	
+		elif info[0] == 'root':
+			logger.debug('kill all openvpn service')
+			os.system('sudo killall openvpn')
+			time.sleep(1)
+			res, info = commands.getstatusoutput('sudo openvpn --daemon --config ' + vpncert)
+			logger.info("connect to VPN")
+			print "have try to connect to VPN"
+			
 		   #if self.checkVPNConnect():
 			#	logger.debug('VPN already connect')
 			#	print "VPN already connect"
@@ -193,6 +200,11 @@ if __name__ == '__main__':
 
 	nc = networkControl(args.serialport, args.baudrate, args.timeout, args.rtscts)
 	errortime = 0
+	LED = 18
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(LED, GPIO.OUT)
+	GPIO.output(LED, True)
+	time.sleep(10)
 	while 1:
 		print
 		print " [x]check network connection"
