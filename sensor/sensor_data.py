@@ -70,7 +70,7 @@ class sensor_data(rpc_client):
 				nums = rawdata.split(" ")[1:-1]
 				if len(nums) != 16:
 					continue
-				ticks = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) #get timestamp
+				ticks = time.strftime("%Y-%m-%d_%H.%M.%S", time.localtime()) #get timestamp
 				for i in range(0,16):
 					nums[i] = float(nums[i])
 				 
