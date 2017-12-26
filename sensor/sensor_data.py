@@ -13,7 +13,7 @@ import logging
 import logcreator
 from subprocess import call
 
-
+info_path = '/home/pi/data_iov/info/driver_id.txt'
 basedir = os.environ['IOVPATH']
 log_path = '/home/pi/data_iov/log/raspi_IOV.log'
 storage_path = '/home/pi/data_iov/sensor'
@@ -93,10 +93,12 @@ class sensor_data(rpc_client):
 					continue
 				else:
 					should_shut_down = 0
-				if passtime == 4:
+				if passtime == 8:
+					driver_id = open(info_path, "r").readline().rstrip()
 					fw = open(fn+".txt", 'w') # write value to file
 					fw.write(str(configdata['vid'])+'\n'+\
 						ticks+'\n'+\
+						driver_id +'\n'+ \
 						str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
 						str(nums[3])+' '+str(nums[4])+' '+str(nums[5])+' '+\
 						str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
