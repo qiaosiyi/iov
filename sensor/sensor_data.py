@@ -93,17 +93,17 @@ class sensor_data(rpc_client):
 					continue
 				else:
 					should_shut_down = 0
-				if passtime == 8:
+				if passtime == 1:
 					driver_id = open(info_path, "r").readline().rstrip()
 					fw = open(fn+".txt", 'w') # write value to file
 					fw.write(str(configdata['vid'])+'\n'+\
 						ticks+'\n'+\
 						driver_id +'\n'+ \
-						str(nums[0])+' '+str(nums[1])+' '+str(nums[2])+' '+\
-						str(nums[3])+' '+str(nums[4])+' '+str(nums[5])+' '+\
-						str(nums[6])+' '+str(nums[7])+' '+str(nums[8])+' '+str(nums[9])+' '+\
-						str(nums[10])+' '+str(nums[11])+' '+\
-						str(nums[12])+' '+str(nums[13])+' '+str(nums[14])+' '+str(nums[15])+'\n')
+						str(nums[0])+'\n'+str(nums[1])+'\n'+str(nums[2])+'\n'+\
+						str(nums[3])+'\n'+str(nums[4])+'\n'+str(nums[5])+'\n'+\
+						str(nums[6])+'\n'+str(nums[7])+'\n'+str(nums[8])+'\n'+str(nums[9])+'\n'+\
+						str(nums[10])+'\n'+str(nums[11])+'\n'+\
+						str(nums[12])+'\n'+str(nums[13])+'\n'+str(nums[14])+'\n'+str(nums[15]))
 					fw.close() 
 					cmd = "tar -cvf tmp.tar " + ff+".txt" #tar the text file and move it to storage path
 					res, info = commands.getstatusoutput(cmd) 
@@ -137,6 +137,5 @@ if __name__ == '__main__':
 	parser.add_argument('-s', dest='serialport', type =str, help='serialport of the MCU')
 	parser.add_argument('-host', dest = 'hostip', type = str, help = 'host IP of the server', default = '101.200.181.242')
 	args = parser.parse_args()
-
 	factory = sensor_data("iov", "iovpro", args.hostip, "normal_message", args.serialport)
 	factory.processing_data()
